@@ -30,8 +30,8 @@ public class Credenciales implements Serializable{
         
         IP_NUEVA = "";
         IP_ACTUAL = "1.1.1.4";
-        USUARIO = "manureyesi";
-        CONTRASENA = "Maindo.11";
+        USUARIO = "";
+        CONTRASENA = "";
         URL = "https://panel.dinahosting.com";
         DOMINIO = "fiandeira.es";
         NOMBRE_HOST = "prueba";
