@@ -5,7 +5,6 @@
  */
 package SCRAPING;
 
-import UTILES.Credenciales;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,6 +63,8 @@ public class Scraping {
                 
                 creden = (UTILES.Credenciales)leerObjeto.readObject();
                 
+            }else{
+                creden = new UTILES.Credenciales();
             }
             
         }
@@ -93,11 +94,11 @@ public class Scraping {
             log.error("Error al recuperar IP");
         }
         
-        if(ip.compareTo(Credenciales.IP_ACTUAL) != 0){
+        if(ip.compareTo(creden.IP_ACTUAL) != 0){
         
             Response response = null;
             
-            Credenciales.IP_NUEVA = ip;
+            creden.IP_NUEVA = ip;
 
             try{
 
@@ -105,25 +106,34 @@ public class Scraping {
 
                 log.info("Preparando Inicio de Sesion");
 
-                cokies = Jsoup.connect(Credenciales.URL+"/login").method(Method.POST)
-                        .data("id", Credenciales.USUARIO)
-                        .data("password", Credenciales.CONTRASENA)
+                cokies = Jsoup.connect(creden.URL+"/login").method(Method.POST)
+                        .data("id", creden.USUARIO)
+                        .data("password", creden.CONTRASENA)
                         .data("recordar", "0")
                         .execute().cookies();
 
                 log.info("Cokies: "+cokies.toString());
-
-                response = Jsoup.connect(Credenciales.URL+"/dominio/procesar-formulario-zonas-modificar-ajax/_producto/"+Credenciales.DOMINIO).method(Method.POST)
-                    .data("tipo_zona", Credenciales.TIPO_ZONA)
-                    .data("host_ipv4", Credenciales.NOMBRE_HOST)
-                    .data("ipv4", Credenciales.IP_NUEVA)
-                    .data("destino_original", Credenciales.IP_ACTUAL)
-                    .cookies(cokies)
-                    .execute();
-
-                log.info("IP " + Credenciales.IP_NUEVA + " actualiza con exito para el Host " + Credenciales.NOMBRE_HOST);
                 
-                Credenciales.IP_ACTUAL = Credenciales.IP_NUEVA;
+                try{
+                
+                    response = Jsoup.connect(creden.URL+"/dominio/procesar-formulario-zonas-modificar-ajax/_producto/"+creden.DOMINIO).method(Method.POST)
+                        .data("tipo_zona", creden.TIPO_ZONA)
+                        .data("host_ipv4", creden.NOMBRE_HOST)
+                        .data("ipv4", creden.IP_NUEVA)
+                        .data("destino_original", creden.IP_ACTUAL)
+                        .cookies(cokies)
+                        .execute();
+
+                }
+                catch(Exception ex){}
+                
+                log.info("IP actual: "+ creden.IP_ACTUAL);
+
+                log.info("IP " + creden.IP_NUEVA + " actualiza con exito para el Host " + creden.NOMBRE_HOST);
+                
+                creden.IP_ACTUAL = creden.IP_NUEVA;
+                
+                log.info("IP actual: "+ creden.IP_ACTUAL);
                 
             }
             catch(Exception ex){
@@ -137,13 +147,15 @@ public class Scraping {
                 ObjectOutputStream guardarFichero = new ObjectOutputStream(new FileOutputStream(FICHERO));
                 guardarFichero.writeObject(creden);
                 guardarFichero.close();
+                
                 log.info("Objeto guardado con exito en el archivo " +FICHERO);
 
             }
             catch(IOException ex){
                 log.error("Error al guardar Objeto en el fichero");
             }
-        
+            
+            
         }
         
     }
