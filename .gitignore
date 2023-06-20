@@ -22,7 +22,6 @@
 hs_err_pid*
 /Scraping/nbproject/private/
 /Scraping/build/
-*.xml
 *.mf
 Scraping/CAMBIO_IP
 Scraping/nbproject/genfiles.properties
