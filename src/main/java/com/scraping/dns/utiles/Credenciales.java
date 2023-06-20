@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UTILES;
+package com.scraping.dns.utiles;
 
 import java.io.Serializable;
 
@@ -30,7 +30,7 @@ public class Credenciales implements Serializable{
         
         IP_NUEVA = "";
         IP_ACTUAL = "1.1.1.4";
-        USUARIO = "";
+        USUARIO = " ";
         CONTRASENA = "";
         URL = "https://panel.dinahosting.com";
         DOMINIO = "fiandeira.es";

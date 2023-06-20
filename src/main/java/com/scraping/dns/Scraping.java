@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SCRAPING;
+package com.scraping.dns;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -17,14 +19,16 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-//Importar Log
+import javax.xml.crypto.Data;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
-//Importar Jsoup
-import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
+import org.jsoup.Jsoup;
+
+import com.google.gson.Gson;
+import com.scraping.dns.utiles.Credenciales;
 
 /**
  *
@@ -32,7 +36,7 @@ import org.jsoup.Connection.Response;
  */
 public class Scraping {
     
-    public static String FICHERO = "CAMBIO_IP";
+    public static String FICHERO = "CAMBIO_IP.json";
     
     private static Logger log = Logger.getLogger(Scraping.class);
     
@@ -42,12 +46,12 @@ public class Scraping {
     public static void main(String[] args) {
         
         // Carga el archivo de configuracion de log4J
-        PropertyConfigurator.configure("log4j.properties"); 
+        PropertyConfigurator.configure("log4j.properties");
         
         /* Este Servicio solo es valido para Dinahosting */
         
         log.info("Iniciando...............................");
-        UTILES.Credenciales creden = null;
+        Credenciales creden = null;
         
         log.info("Preparandose para leer Archivo de Objetos");
         try{
@@ -57,18 +61,16 @@ public class Scraping {
             //Comprobar si existe el Archivo
             if(file.exists()){
                 //Leendo archivo de Objetos
-                ObjectInputStream leerObjeto = new ObjectInputStream(new FileInputStream(FICHERO));
-                
-                creden = new UTILES.Credenciales();
-                
-                creden = (UTILES.Credenciales)leerObjeto.readObject();
-                
+                FileReader reader = new FileReader(FICHERO);
+
+                creden = new Gson().fromJson(reader, Credenciales.class);
+
             }else{
-                creden = new UTILES.Credenciales();
+                creden = new Credenciales();
             }
             
         }
-        catch(IOException | ClassNotFoundException ex){
+        catch(IOException ex){
             log.error("Error al leer archivo en el fichero");
         }
         
@@ -144,10 +146,12 @@ public class Scraping {
 
                 //Guardando en Fichero
                 log.info("Preparando para guarda objeto en Archivo");
-                ObjectOutputStream guardarFichero = new ObjectOutputStream(new FileOutputStream(FICHERO));
-                guardarFichero.writeObject(creden);
-                guardarFichero.close();
-                
+                FileWriter fileW = new FileWriter(FICHERO);
+                String jsonInString = new Gson().toJson(creden);
+                fileW.write(jsonInString);
+                fileW.flush();
+                fileW.close();
+
                 log.info("Objeto guardado con exito en el archivo " +FICHERO);
 
             }

@@ -27,3 +27,5 @@ hs_err_pid*
 Scraping/CAMBIO_IP
 Scraping/nbproject/genfiles.properties
 Scraping/nbproject/project.properties
+
+.idea/
